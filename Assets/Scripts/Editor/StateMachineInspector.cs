@@ -14,6 +14,8 @@ public class StateMachineInspector : Editor
     }
     public override void OnInspectorGUI()
     {
+
+        //TODO: Show StateEngine Information on the inspector
         EditorGUILayout.LabelField(currentState.name);
     }
 
