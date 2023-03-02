@@ -1,22 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(StateMachine))]
-public class StateMachineInspector : Editor
+[CustomEditor(typeof(CharacterStateMachine))]
+[CanEditMultipleObjects]
+public class StateMachineInspector : AbstractInspector
 {
-    StateMachine currentState;
+    SerializedProperty p_currentState = null;
 
-    public void OnEnable()
+    protected override void enable()
     {
-        currentState = target as StateMachine;
-    }
-    public override void OnInspectorGUI()
-    {
-
-        //TODO: Show StateEngine Information on the inspector
-        EditorGUILayout.LabelField(currentState.name);
     }
 
+    protected override void getFields()
+    {
+    }
+
+    protected override void getProperties()
+    {
+        p_currentState = serializedObject.FindProperty("currentState");
+    }
+
+    protected override void mainUI()
+    {
+        CustomEditorStyles.SeparatorUI();
+
+        GUILayout.BeginHorizontal();
+
+        Color defaultColor = GUI.color;
+        GUI.color = Color.yellow;
+        EditorGUILayout.LabelField("Current State: ");
+        GUI.color = defaultColor;
+
+        string currentStateTxt = p_currentState != null ? p_currentState.ToString() : "NONE";
+        EditorGUILayout.LabelField(currentStateTxt, CustomEditorStyles.GUIStyle_BoldLabel);
+
+        GUILayout.EndHorizontal();
+    }
 }

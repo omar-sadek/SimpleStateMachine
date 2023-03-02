@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class StateMachine : MonoBehaviour
 {
     protected Dictionary<string, State> StatesDictionary = null;
-    State currentState = null;
+    [SerializeField] [HideInInspector] State currentState = null;
 
     #region UNITY & CORE
 
@@ -76,16 +76,6 @@ public abstract class StateMachine : MonoBehaviour
     private State getStateByName(string i_stateName)
     {
         return StatesDictionary[i_stateName];
-    }
-
-    #endregion
-
-    #region DEBUG
-
-    private void OnGUI()
-    {
-        string content = currentState != null ? currentState.name : "No Current State";
-        GUILayout.Label($"<color='cyan'><size=40>{content}</size></color>");
     }
 
     #endregion
