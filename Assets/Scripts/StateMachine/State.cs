@@ -1,14 +1,11 @@
-public class State
-{
-    public string name;
-    protected StateMachine stateMachine;
+using UnityEngine;
 
-    public State(string i_name, StateMachine i_stateMachine)
-    {
-        name = i_name;
-        stateMachine = i_stateMachine;
-        OnStateInit();
-    }
+public class State : MonoBehaviour
+{
+    [SerializeField] protected string StateID = null;
+    protected StateMachine stateMachine = null;
+
+    #region STATE API
 
     /// <summary>
     /// Excuted (ONCE) on Initialization.
@@ -39,5 +36,25 @@ public class State
     /// Excuted everytime your exit the state.
     /// </summary>
     public virtual void OnStateExit() { }
+
+    #endregion
+
+    public void InitializeState(StateMachine i_stateMachine)
+    {
+        stateMachine = i_stateMachine;
+
+        OnStateInit();
+    }
+
+    public string StateKey => StateID;
+
+    #region DEBUG
+
+    public override string ToString()
+    {
+        return StateID;
+    }
+
+    #endregion
 
 }

@@ -1,14 +1,13 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(CharacterStateMachine))]
-[CanEditMultipleObjects]
+[CustomEditor(typeof(StateMachine), true)]
 public class StateMachineInspector : AbstractInspector
 {
-    SerializedProperty p_currentState = null;
-
+    StateMachine stateMachine = null;
     protected override void enable()
     {
+
     }
 
     protected override void getFields()
@@ -17,7 +16,7 @@ public class StateMachineInspector : AbstractInspector
 
     protected override void getProperties()
     {
-        p_currentState = serializedObject.FindProperty("currentState");
+        stateMachine = (StateMachine)target;
     }
 
     protected override void mainUI()
@@ -31,8 +30,10 @@ public class StateMachineInspector : AbstractInspector
         EditorGUILayout.LabelField("Current State: ");
         GUI.color = defaultColor;
 
-        string currentStateTxt = p_currentState != null ? p_currentState.ToString() : "NONE";
+        string currentStateTxt = stateMachine != null ? stateMachine.ToString() : "NULL";
+        if (currentStateTxt == "NULL") GUI.color = Color.red;
         EditorGUILayout.LabelField(currentStateTxt, CustomEditorStyles.GUIStyle_BoldLabel);
+        GUI.color = defaultColor;
 
         GUILayout.EndHorizontal();
     }

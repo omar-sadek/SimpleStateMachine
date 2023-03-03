@@ -2,18 +2,21 @@ using UnityEngine;
 
 public class MovementState : State
 {
+    [SerializeField] private State idleState = null;
+
     private CharacterStateMachine charStateMachine = null;
     private float xInput;
 
-    public MovementState(CharacterStateMachine stateMachine) : base("MovementState", stateMachine)
+    public override void OnStateInit()
     {
-        charStateMachine = stateMachine;
+        base.OnStateInit();
+
+        charStateMachine = (CharacterStateMachine)stateMachine;
     }
 
     public override void OnStateEnter()
     {
         base.OnStateEnter();
-
         xInput = 0;
     }
 
@@ -23,7 +26,7 @@ public class MovementState : State
 
         xInput = Input.GetAxis("Horizontal");
         if (Mathf.Abs(xInput) < Mathf.Epsilon)
-            stateMachine.SetState("IdleState");
+            stateMachine.SetState(idleState);
     }
 
     public override void OnStateLateUpdate()

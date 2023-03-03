@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class IdleState : State
 {
-    private float xInput;
+    [SerializeField] private State movementState = null;
 
-    public IdleState(CharacterStateMachine stateMachine) : base("IdleState", stateMachine) { }
+    private float xInput;
 
     public override void OnStateEnter()
     {
@@ -12,7 +12,7 @@ public class IdleState : State
 
         xInput = 0;
     }
-    
+
     public override void OnStateUpdate()
     {
         base.OnStateUpdate();
@@ -20,7 +20,7 @@ public class IdleState : State
         xInput = Mathf.Abs(Input.GetAxis("Horizontal"));
         if (xInput > Mathf.Epsilon)
         {
-            stateMachine.SetState("MovementState");
+            stateMachine.SetState(movementState);
         }
     }
 

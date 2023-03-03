@@ -3,16 +3,18 @@ using UnityEngine;
 
 public abstract class StateMachine : MonoBehaviour
 {
-    protected Dictionary<string, State> StatesDictionary = null;
+    [SerializeField] private State initialState = null;
+
+    private Dictionary<string, State> statesDictionary = null;
     [SerializeField] [HideInInspector] State currentState = null;
 
     #region UNITY & CORE
 
     protected virtual void Awake()
     {
-        StatesDictionary = new Dictionary<string, State>();
-        InitializeDictionary();
-        currentState = GetInitialState();
+        statesDictionary = new Dictionary<string, State>();
+        initializeStates();
+        currentState = getInitialState();
     }
 
     private void Update()
@@ -34,13 +36,6 @@ public abstract class StateMachine : MonoBehaviour
 
     #endregion
 
-    #region PROTECTED API
-
-    protected abstract State GetInitialState();
-
-    protected abstract void InitializeDictionary();
-
-    #endregion
 
     #region PUBLIC API
 
@@ -54,15 +49,40 @@ public abstract class StateMachine : MonoBehaviour
     /// <summary>
     /// Exits from the current state, Enter the passed state.
     /// </summary>
-    public void SetState(string i_stateName)
+    public void SetState(string i_stateID)
     {
-        State newState = getStateByName(i_stateName);
+        State newState = getStateByID(i_stateID);
         changeState(newState);
     }
 
     #endregion
 
     #region PRIVATE API
+
+    private void initializeStates()
+    {
+        State[] states = GetComponentsInChildren<State>(true);
+
+        if (states == null) return;
+
+        int length = states.Length;
+
+        for (int i = 0; i < length; i++)
+        {
+            states[i].InitializeState(this);
+            statesDictionary.Add(states[i].StateKey, states[i]);
+        }
+    }
+
+    private State getInitialState()
+    {
+        if (initialState == null) 
+        {
+            Debug.LogError("State Machine Error: You Need to assign a default state");
+            return null;
+        }
+        return initialState;
+    }
 
     private void changeState(State i_state) 
     {
@@ -73,9 +93,18 @@ public abstract class StateMachine : MonoBehaviour
         currentState.OnStateEnter();
     }
 
-    private State getStateByName(string i_stateName)
+    private State getStateByID(string i_stateID)
     {
-        return StatesDictionary[i_stateName];
+        return statesDictionary[i_stateID];
+    }
+
+    #endregion
+
+    #region DEBUG
+
+    public override string ToString()
+    {
+        return currentState != null ? currentState.ToString() : "NULL";
     }
 
     #endregion
