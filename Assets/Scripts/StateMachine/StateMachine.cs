@@ -15,6 +15,7 @@ public abstract class StateMachine : MonoBehaviour
         statesDictionary = new Dictionary<string, State>();
         initializeStates();
         currentState = getInitialState();
+        currentState?.OnStateEnter();
     }
 
     private void Update()
@@ -53,6 +54,11 @@ public abstract class StateMachine : MonoBehaviour
     {
         State newState = getStateByID(i_stateID);
         changeState(newState);
+    }
+
+    public void DebugEvents(string txt)
+    {
+        Debug.LogError(txt);
     }
 
     #endregion
