@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void StateMachineEvent(); 
+
 public abstract class StateMachineAbstract : MonoBehaviour
 {
     [SerializeField] private State initialState = null;
@@ -10,6 +12,8 @@ public abstract class StateMachineAbstract : MonoBehaviour
     
     State currentState = null;
     State previousState = null;
+    
+    public StateMachineEvent OnStateChanged;
 
     #region UNITY & CORE
 
@@ -27,7 +31,7 @@ public abstract class StateMachineAbstract : MonoBehaviour
         registerState(currentState);
         currentState.InitializeState(this);
         
-        currentState?.EnterState();
+        currentState.EnterState();
     }
 
     private void Update()
@@ -128,12 +132,7 @@ public abstract class StateMachineAbstract : MonoBehaviour
         State state = GetState<StateType>(true);
         return SetState(state);
     }
-
-    public void DebugEvents(string txt)
-    {
-        Debug.LogError(txt);
-    }
-
+    
     #endregion
 
     #region PRIVATE API
@@ -165,6 +164,8 @@ public abstract class StateMachineAbstract : MonoBehaviour
         currentState = i_state;
 
         currentState.EnterState();
+        
+        OnStateChanged?.Invoke();
     }
 
     #endregion
