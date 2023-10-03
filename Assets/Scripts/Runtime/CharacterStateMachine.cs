@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CharacterStateMachine : StateMachine
+public class CharacterStateMachine : StateMachineAbstract
 {
     [SerializeField] private float characterSpeed = 5.0f;
 
@@ -9,5 +9,4 @@ public class CharacterStateMachine : StateMachine
     public float CharacterSpeed => characterSpeed;
 
     #endregion
-
 }

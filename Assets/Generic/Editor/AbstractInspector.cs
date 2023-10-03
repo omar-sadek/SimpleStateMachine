@@ -29,7 +29,7 @@ public abstract class AbstractInspector : Editor
 
         if (true == EditorApplication.isCompiling)
         {
-            CustomEditorStyles.HeaderUI("Assemblies are compiling...");
+            CustomEditorStyles.HeaderUI("Compiling...");
             return;
         }
 

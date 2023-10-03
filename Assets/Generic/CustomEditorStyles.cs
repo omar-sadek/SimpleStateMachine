@@ -74,8 +74,23 @@ public static class CustomEditorStyles
             return mGUIStyle_HandleTitle;
         }
     }
-
+    
     public static GUIStyle GUIStyle_BoldLabel
+    {
+        get
+        {
+            if (mGUIStyle_BoldLabel == null)
+            {
+                mGUIStyle_BoldLabel = new GUIStyle("BoldLabel");
+                mGUIStyle_BoldLabel.fontSize = 13;
+                mGUIStyle_BoldLabel.fontStyle = FontStyle.Bold;
+
+            }
+            return mGUIStyle_BoldLabel;
+        }
+    }
+
+    public static GUIStyle GUIStyle_BoldItalicLabel
     {
         get
         {
@@ -89,6 +104,7 @@ public static class CustomEditorStyles
             return mGUIStyle_BoldLabel;
         }
     }
+    
     public static GUIStyle GUIStyle_NormalLabel
     {
         get

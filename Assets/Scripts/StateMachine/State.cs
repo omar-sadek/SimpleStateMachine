@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class State : MonoBehaviour
 {
     [SerializeField] protected string StateID = null;
-    protected StateMachine stateMachine = null;
+    protected StateMachineAbstract stateMachine = null;
 
     [SerializeField] UnityEvent onStateInit = null;
     [SerializeField] UnityEvent onStateEnter = null;
@@ -15,7 +15,7 @@ public class State : MonoBehaviour
     /// <summary>
     /// Excuted (ONCE) on Initialization.
     /// </summary>
-    public virtual void OnStateInit()
+    public virtual void InitState()
     {
         onStateInit?.Invoke();
     }
@@ -23,7 +23,7 @@ public class State : MonoBehaviour
     /// <summary>
     /// Excuted everytime you enter the state.
     /// </summary>
-    public virtual void OnStateEnter()
+    public virtual void EnterState()
     {
         onStateEnter?.Invoke();
     }
@@ -31,39 +31,45 @@ public class State : MonoBehaviour
     /// <summary>
     /// Excuted every frame.
     /// </summary>
-    public virtual void OnStateUpdate()
+    public virtual void UpdateState()
     {
     }
 
     /// <summary>
     /// Excuted every physics frame.
     /// </summary>
-    public virtual void OnStateLateUpdate()
+    public virtual void LateUpdateState()
     {
     }
 
     /// <summary>
     /// Excuted every fixed frame.
     /// </summary>
-    public virtual void OnStateFixedUpdate()
+    public virtual void StateFixedUpdate()
     {
     }
 
     /// <summary>
     /// Excuted everytime your exit the state.
     /// </summary>
-    public virtual void OnStateExit()
+    public virtual void ExitState()
     {
         onStateExit?.Invoke();
+    }
+    
+    protected bool SetState<StateType>() where StateType : State
+    {
+        if (null == stateMachine) return false;
+        return stateMachine.SetState<StateType>();
     }
 
     #endregion
 
-    public void InitializeState(StateMachine i_stateMachine)
+    public void InitializeState(StateMachineAbstract i_stateMachineAbstract)
     {
-        stateMachine = i_stateMachine;
+        stateMachine = i_stateMachineAbstract;
 
-        OnStateInit();
+        InitState();
     }
 
     public string StateKey => StateID;
