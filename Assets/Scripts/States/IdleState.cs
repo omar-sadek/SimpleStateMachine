@@ -1,23 +1,20 @@
 using UnityEngine;
 
-public class IdleState : State
+namespace StateEngine
 {
-    private float xInput;
-
-    public override void EnterState()
+    public class IdleState : CharacterAbstractState
     {
-        base.EnterState();
-
-        xInput = 0;
+        protected override void onMoveInput(float i_xInput)
+        {
+            if (Mathf.Abs(i_xInput) > Mathf.Epsilon)
+            {
+                SetState<MovementState>();
+            }
+        }
+        
+        protected override void onJumpInput()
+        {
+            SetState<JumpState>();
+        }
     }
-
-    public override void UpdateState()
-    {
-        base.UpdateState();
-
-        xInput = Mathf.Abs(Input.GetAxis("Horizontal"));
-        if (xInput > Mathf.Epsilon)
-            SetState<MovementState>();
-    }
-
 }

@@ -1,24 +1,26 @@
 using UnityEditor;
-using UnityEngine;
 
-[CustomEditor(typeof(State), true)]
-public class StateInspector : AbstractInspector
+namespace StateEngine
 {
-    protected override void enable()
+    [CustomEditor(typeof(StateAbstract), true)]
+    public class StateInspector : AbstractInspector
     {
+        protected override void enable()
+        {
 
-    }
+        }
 
-    protected override void getFields()
-    {
-    }
+        protected override void getFields()
+        {
+        }
 
-    protected override void getProperties()
-    {
-    }
+        protected override void getProperties()
+        {
+        }
 
-    protected override void mainUI()
-    {
-        
+        protected override void mainUI()
+        {
+
+        }
     }
 }

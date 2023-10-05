@@ -1,12 +1,16 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class CharacterStateMachine : StateMachineAbstract
+namespace StateEngine
 {
-    [SerializeField] private float characterSpeed = 5.0f;
+    public class CharacterStateMachine : StateMachineAbstract
+    {
+        [SerializeField] private Rigidbody2D physicalBody = null;
 
-    #region GETTERS
+        #region GETTERS
 
-    public float CharacterSpeed => characterSpeed;
+        public Rigidbody2D PhysicalBody => physicalBody;
 
-    #endregion
+        #endregion
+    }
 }

@@ -1,38 +1,26 @@
 using UnityEngine;
 
-public class MovementState : State
+namespace StateEngine
 {
-    private CharacterStateMachine _charStateMachine = null;
-    private float xInput;
-
-    public override void InitState()
+    public class MovementState : CharacterAbstractState
     {
-        base.InitState();
-
-        _charStateMachine = (CharacterStateMachine)stateMachine;
+        [SerializeField] private float moveSpeed = 8f;
+        
+        protected override void onMoveInput(float i_xInput)
+        {
+            if (Mathf.Abs(i_xInput) < Mathf.Epsilon)
+            {
+                SetState<IdleState>();
+                return;
+            }
+            
+            Vector3 moveVector = new Vector2(i_xInput * moveSpeed * Time.fixedDeltaTime, 0);
+            move(moveVector);
+        }
+        
+        protected override void onJumpInput()
+        {
+            SetState<JumpState>();
+        }
     }
-
-    public override void EnterState()
-    {
-        base.EnterState();
-        xInput = 0;
-    }
-
-    public override void UpdateState()
-    {
-        base.UpdateState();
-
-        xInput = Input.GetAxis("Horizontal");
-        if (Mathf.Abs(xInput) < Mathf.Epsilon)
-            SetState<IdleState>();
-    }
-
-    public override void LateUpdateState()
-    {
-        base.LateUpdateState();
-
-        Vector3 xMovement = new Vector2(xInput * _charStateMachine.CharacterSpeed * Time.deltaTime, 0f);
-        _charStateMachine.transform.position += xMovement;
-    }
-
 }

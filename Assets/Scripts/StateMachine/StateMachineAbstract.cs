@@ -2,41 +2,43 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void StateMachineEvent(); 
+namespace StateEngine
+{
+public delegate void StateMachineEvent();
 
 public abstract class StateMachineAbstract : MonoBehaviour
 {
-    [SerializeField] private State initialState = null;
+    [SerializeField] private StateAbstract initialState = null;
 
-    private Dictionary<System.Type, State> stateDictionary = null;
-    
-    State currentState = null;
-    State previousState = null;
-    
+    private Dictionary<System.Type, StateAbstract> stateDictionary = null;
+
+    StateAbstract currentState = null;
+    StateAbstract previousState = null;
+
     public StateMachineEvent OnStateChanged;
 
     #region UNITY & CORE
 
     protected virtual void Awake()
     {
-        stateDictionary = new Dictionary<System.Type, State>();
-        
+        stateDictionary = new Dictionary<System.Type, StateAbstract>();
+
         currentState = getInitialState();
         if (currentState == null)
         {
             Debug.LogError("Cannot find states");
             return;
         }
-        
+
         registerState(currentState);
         currentState.InitializeState(this);
-        
-        currentState.EnterState();
+
+        currentState.OnStateEnter();
     }
 
     private void Update()
     {
-        currentState?.UpdateState();
+        currentState?.StateUpdate();
 
     }
 
@@ -48,21 +50,21 @@ public abstract class StateMachineAbstract : MonoBehaviour
 
     private void LateUpdate()
     {
-        currentState?.LateUpdateState();
+        currentState?.StateLateUpdate();
     }
 
     #endregion
 
     #region PUBLIC API
 
-    public State CurrentState => currentState;
+    public StateAbstract CurrentState => currentState;
 
-    public State PreviousState => previousState;
+    public StateAbstract PreviousState => previousState;
 
     public System.Type CurrentStateType => null == currentState ? null : currentState.GetType();
 
     public System.Type PreviousStateType => null == previousState ? null : previousState.GetType();
-    
+
     public bool IsCurrentStateOfType<T>()
     {
         if (null == currentState) return false;
@@ -78,11 +80,11 @@ public abstract class StateMachineAbstract : MonoBehaviour
     public IReadOnlyList<System.Type> GetAllStateTypes()
     {
         if (stateDictionary == null) return null;
-        
+
         List<System.Type> stateTypes = new List<Type>();
         int length = stateDictionary.Count;
 
-        foreach ( KeyValuePair<System.Type, State> stateType in stateDictionary)
+        foreach (KeyValuePair<System.Type, StateAbstract> stateType in stateDictionary)
         {
             stateTypes.Add(stateType.Key);
         }
@@ -93,11 +95,11 @@ public abstract class StateMachineAbstract : MonoBehaviour
     /// <summary>
     /// Return State Type
     /// </summary>
-    public State GetState<StateType>(bool i_searchInHierarchy = true) where StateType : State
+    public StateAbstract GetState<StateType>(bool i_searchInHierarchy = true) where StateType : StateAbstract
     {
         if (null == stateDictionary) return null;
 
-        State state = null;
+        StateAbstract state = null;
         if (false == stateDictionary.TryGetValue(typeof(StateType), out state))
         {
             if (true == i_searchInHierarchy)
@@ -110,63 +112,68 @@ public abstract class StateMachineAbstract : MonoBehaviour
                 }
             }
         }
+
         return state;
     }
 
     /// <summary>
     /// Exits from the current state, Enter the passed state.
     /// </summary>
-    public bool SetState(State i_state)
+    public bool SetState(StateAbstract i_state)
     {
         if (i_state == null) return false;
-        
+        if (i_state == currentState) return false;
+
         changeState(i_state);
         return true;
     }
-    
+
     /// <summary>
     /// Exits from the current state, Enter the passed state.
     /// </summary>
-    public bool SetState<StateType>() where StateType : State
+    public bool SetState<StateType>() where StateType : StateAbstract
     {
-        State state = GetState<StateType>(true);
+        if (currentState is StateType) return false;
+        
+        StateAbstract state = GetState<StateType>(true);
         return SetState(state);
     }
-    
+
     #endregion
 
     #region PRIVATE API
 
-    private void registerState(State i_state)
+    private void registerState(StateAbstract i_state)
     {
         if (i_state == null) return;
 
-        if(stateDictionary == null) stateDictionary = new Dictionary<System.Type, State>();
-        
+        if (stateDictionary == null) stateDictionary = new Dictionary<System.Type, StateAbstract>();
+
         System.Type stateType = i_state.GetType();
-        
-        if (false == stateDictionary.ContainsKey(stateType)) 
+
+        if (false == stateDictionary.ContainsKey(stateType))
             stateDictionary.Add(stateType, i_state);
     }
 
-    private State getInitialState()
+    private StateAbstract getInitialState()
     {
-        if (initialState == null) initialState = GetComponentInChildren<State>();
+        if (initialState == null) initialState = GetComponentInChildren<StateAbstract>();
         return initialState;
     }
 
-    private void changeState(State i_state) 
+    private void changeState(StateAbstract i_state)
     {
         previousState = currentState;
 
-        currentState.ExitState();
+        currentState.OnStateExit();
 
         currentState = i_state;
 
-        currentState.EnterState();
-        
+        currentState.OnStateEnter();
+
         OnStateChanged?.Invoke();
     }
 
     #endregion
+}
 }

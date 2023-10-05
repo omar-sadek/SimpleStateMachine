@@ -9,7 +9,7 @@ public abstract class AbstractInspector : Editor
 
     public void OnEnable()
     {
-        title = target.GetType().ToString();
+        title = target.GetType().Name;
 
         enable();
         getFields();
@@ -23,19 +23,19 @@ public abstract class AbstractInspector : Editor
     }
     public override void OnInspectorGUI()
     {
-        GUI.backgroundColor = Color.Lerp(Color.white, Color.gray, 0.8f);
-        GUILayout.BeginVertical(CustomEditorStyles.GUIStyle_Background, GUILayout.Height(1));
+        GUI.backgroundColor = InspectorStyles.DarkPurpleColor;
+        GUILayout.BeginVertical(InspectorStyles.GUIStyle_Background, GUILayout.Height(1));
         GUI.backgroundColor = Color.white;
 
         if (true == EditorApplication.isCompiling)
         {
-            CustomEditorStyles.HeaderUI("Compiling...");
+            InspectorStyles.HeaderUI("Compiling...");
             return;
         }
 
         getFields();
 
-        CustomEditorStyles.HeaderUI(title);
+        InspectorStyles.HeaderUI(title);
 
         base.OnInspectorGUI();
 
